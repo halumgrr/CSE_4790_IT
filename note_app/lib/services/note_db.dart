@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/note.dart';
 
 class NoteDb {
-  static final _store = intMapStoreFactory.store('notes');
+  static final _store = stringMapStoreFactory.store('notes');
   static Database? _db;
 
   static Future<Database> get _database async {
@@ -20,15 +20,15 @@ class NoteDb {
     final db = await _database;
     final records = await _store.find(db);
     return records.map((snap) => Note(
-      id: snap.key.toString(),
-  title: (snap.value['title'] ?? '') as String,
-  content: (snap.value['content'] ?? '') as String,
+      id: snap.key,
+      title: (snap.value['title'] ?? '') as String,
+      content: (snap.value['content'] ?? '') as String,
     )).toList();
   }
 
   static Future<void> addNote(Note note) async {
     final db = await _database;
-    await _store.record(int.parse(note.id)).put(db, {
+    await _store.record(note.id).put(db, {
       'title': note.title,
       'content': note.content,
     });
@@ -36,7 +36,7 @@ class NoteDb {
 
   static Future<void> updateNote(Note note) async {
     final db = await _database;
-    await _store.record(int.parse(note.id)).update(db, {
+    await _store.record(note.id).update(db, {
       'title': note.title,
       'content': note.content,
     });
@@ -44,6 +44,6 @@ class NoteDb {
 
   static Future<void> deleteNote(String id) async {
     final db = await _database;
-    await _store.record(int.parse(id)).delete(db);
+    await _store.record(id).delete(db);
   }
 }

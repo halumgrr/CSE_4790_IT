@@ -1,28 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/note.dart';
 import 'package:uuid/uuid.dart';
+import '../services/note_db.dart';
 
 final notesProvider = StateNotifierProvider<NotesNotifier, List<Note>>((ref) => NotesNotifier());
 
 class NotesNotifier extends StateNotifier<List<Note>> {
-  void deleteNote(String id) {
-    state = [for (final note in state) if (note.id != id) note];
+  NotesNotifier() : super([]) {
+    _loadNotes();
   }
-  NotesNotifier() : super([]);
 
-  void addNote(String title, String content) {
+  Future<void> _loadNotes() async {
+    final notes = await NoteDb.getNotes();
+    state = notes;
+  }
+
+  Future<void> addNote(String title, String content) async {
     final note = Note(id: const Uuid().v4(), title: title, content: content);
-    state = [...state, note];
+    await NoteDb.addNote(note);
+    await _loadNotes();
   }
 
-  void updateNote(String id, String title, String content) {
-    state = [
-      for (final note in state)
-        if (note.id == id)
-          Note(id: id, title: title, content: content)
-        else
-          note
-    ];
+  Future<void> updateNote(String id, String title, String content) async {
+    final note = Note(id: id, title: title, content: content);
+    await NoteDb.updateNote(note);
+    await _loadNotes();
+  }
+
+  Future<void> deleteNote(String id) async {
+    await NoteDb.deleteNote(id);
+    await _loadNotes();
   }
 
   Note? getNoteById(String id) {
