@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/theme_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -9,6 +10,8 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final themeNotifier = ref.read(themeModeProvider.notifier);
+    final fontSize = ref.watch(fontSizeProvider);
+    final fontSizeNotifier = ref.read(fontSizeProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: Padding(
@@ -29,8 +32,22 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 24),
-            // Placeholder for font size control
-            const Text('Font size control coming soon...', style: TextStyle(fontSize: 16)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Font Size: ${fontSize.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18)),
+                Expanded(
+                  child: Slider(
+                    min: 12,
+                    max: 32,
+                    value: fontSize,
+                    onChanged: (val) {
+                      fontSizeNotifier.setFontSize(val);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
