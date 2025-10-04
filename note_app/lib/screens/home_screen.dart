@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/note_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesProvider);
+  final notes = ref.watch(notesProvider);
+  final fontSize = ref.watch(fontSizeProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notes'),
@@ -28,11 +30,12 @@ class HomeScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final note = notes[index];
                 return ListTile(
-                  title: Text(note.title),
+                  title: Text(note.title, style: TextStyle(fontSize: fontSize)),
                   subtitle: Text(
                     note.content,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: fontSize),
                   ),
                   onTap: () {
                     GoRouter.of(context).go('/edit?id=${note.id}');

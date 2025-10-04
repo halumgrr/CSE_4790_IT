@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/note_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class NoteEditScreen extends ConsumerStatefulWidget {
   const NoteEditScreen({super.key});
@@ -50,6 +51,7 @@ class _NoteEditScreenState extends ConsumerState<NoteEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final fontSize = ref.watch(fontSizeProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(editingNoteId != null ? 'Edit Note' : 'Create Note'),
@@ -67,6 +69,7 @@ class _NoteEditScreenState extends ConsumerState<NoteEditScreen> {
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Title'),
+              style: TextStyle(fontSize: fontSize),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -75,6 +78,7 @@ class _NoteEditScreenState extends ConsumerState<NoteEditScreen> {
                 decoration: const InputDecoration(labelText: 'Content'),
                 maxLines: null,
                 expands: true,
+                style: TextStyle(fontSize: fontSize),
               ),
             ),
           ],
