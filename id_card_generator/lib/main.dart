@@ -43,10 +43,10 @@ class IDCardFormState extends State<IDCardForm> {
   final ImagePicker _picker = ImagePicker();
   
   // Variables for customization
-  Color cardBackgroundColor = Colors.white;
+  Color cardBackgroundColor = Color(0xFF013220);
   List<String> fontFamilies = ['Roboto', 'Arial', 'Times New Roman', 'Courier New', 'Georgia'];
   String currentFontFamily = 'Roboto';
-  List<Color> backgroundColors = [Colors.white, Colors.blue[50]!, Colors.green[50]!, Colors.orange[50]!, Colors.purple[50]!, Colors.pink[50]!];
+  List<Color> backgroundColors = [Colors.white, Colors.blue[50]!, Colors.green[50]!, Colors.orange[50]!, Colors.purple[50]!, Colors.pink[50]!, Color(0xFF013220)];
   int currentColorIndex = 0;
 
   @override
@@ -313,9 +313,9 @@ class IDCardFormState extends State<IDCardForm> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF003433),
-                              borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                              color: cardBackgroundColor,
+                              borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15),
                               ),
@@ -554,9 +554,9 @@ class IDCardFormState extends State<IDCardForm> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 15),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF003433),
-                              borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                              color: cardBackgroundColor,
+                              borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(15),
                                 bottomRight: Radius.circular(15),
                               ),
