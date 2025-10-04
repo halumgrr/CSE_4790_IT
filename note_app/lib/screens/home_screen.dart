@@ -13,7 +13,7 @@ class HomeScreen extends ConsumerWidget {
   final fontSize = ref.watch(fontSizeProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes'),
+        title: Text('Notes', style: TextStyle(fontSize: fontSize)),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

@@ -13,7 +13,9 @@ class SettingsScreen extends ConsumerWidget {
     final fontSize = ref.watch(fontSizeProvider);
     final fontSizeNotifier = ref.read(fontSizeProvider.notifier);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        title: Text('Settings', style: TextStyle(fontSize: fontSize)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Dark Theme', style: TextStyle(fontSize: 18)),
+                Text('Dark Theme', style: TextStyle(fontSize: fontSize)),
                 Switch(
                   value: themeMode == ThemeMode.dark,
                   onChanged: (val) {
@@ -31,11 +33,11 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: fontSize),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Font Size: ${fontSize.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18)),
+                Text('Font Size', style: TextStyle(fontSize: fontSize)),
                 Expanded(
                   child: Slider(
                     min: 12,

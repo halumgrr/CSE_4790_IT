@@ -54,7 +54,10 @@ class _NoteEditScreenState extends ConsumerState<NoteEditScreen> {
     final fontSize = ref.watch(fontSizeProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(editingNoteId != null ? 'Edit Note' : 'Create Note'),
+        title: Text(
+          editingNoteId != null ? 'Edit Note' : 'Create Note',
+          style: TextStyle(fontSize: fontSize),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -68,14 +71,14 @@ class _NoteEditScreenState extends ConsumerState<NoteEditScreen> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(labelText: 'Title', labelStyle: TextStyle(fontSize: fontSize)),
               style: TextStyle(fontSize: fontSize),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: TextField(
                 controller: _contentController,
-                decoration: const InputDecoration(labelText: 'Content'),
+                decoration: InputDecoration(labelText: 'Content', labelStyle: TextStyle(fontSize: fontSize)),
                 maxLines: null,
                 expands: true,
                 style: TextStyle(fontSize: fontSize),
