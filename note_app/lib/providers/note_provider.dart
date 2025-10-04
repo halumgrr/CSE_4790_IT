@@ -5,6 +5,9 @@ import 'package:uuid/uuid.dart';
 final notesProvider = StateNotifierProvider<NotesNotifier, List<Note>>((ref) => NotesNotifier());
 
 class NotesNotifier extends StateNotifier<List<Note>> {
+  void deleteNote(String id) {
+    state = [for (final note in state) if (note.id != id) note];
+  }
   NotesNotifier() : super([]);
 
   void addNote(String title, String content) {

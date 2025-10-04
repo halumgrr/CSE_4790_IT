@@ -52,10 +52,7 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             TextButton(
                               onPressed: () {
-                                ref.read(notesProvider.notifier).state = [
-                                  for (final n in notes)
-                                    if (n.id != note.id) n
-                                ];
+                                ref.read(notesProvider.notifier).deleteNote(note.id);
                                 Navigator.of(context).pop();
                               },
                               child: const Text('Delete', style: TextStyle(color: Colors.red)),
