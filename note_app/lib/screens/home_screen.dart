@@ -37,6 +37,34 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () {
                     GoRouter.of(context).go('/edit?id=${note.id}');
                   },
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Delete Note'),
+                          content: const Text('Are you sure you want to delete this note?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                ref.read(notesProvider.notifier).state = [
+                                  for (final n in notes)
+                                    if (n.id != note.id) n
+                                ];
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
