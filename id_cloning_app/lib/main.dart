@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF4a7a7a),
+                          color: Color(0xFF003433),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15),
@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.vpn_key,
-                                  color: Color(0xFF4a7a7a),
+                                  color: Color(0xFF003433),
                                   size: 22,
                                 ),
                                 const SizedBox(width: 8),
@@ -122,7 +122,7 @@ class MyApp extends StatelessWidget {
                               width: 250,
                               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF4a7a7a),
+                                color: const Color(0xFF003433),
                                 borderRadius: BorderRadius.circular(25),
                               ),
                               child: Row(
@@ -157,7 +157,7 @@ class MyApp extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.person,
-                                  color: Color(0xFF4a7a7a),
+                                  color: Color(0xFF003433),
                                   size: 22,
                                 ),
                                 const SizedBox(width: 8),
@@ -176,7 +176,7 @@ class MyApp extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF4a7a7a),
+                                  color: Color(0xFF003433),
                                 ),
                               ),
                             
@@ -186,7 +186,7 @@ class MyApp extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.school, color: Color(0xFF4a7a7a), size: 22),
+                                  const Icon(Icons.school, color: Color(0xFF003433), size: 22),
                                   const SizedBox(width: 8),
                                   RichText(
                                     text: const TextSpan(
@@ -195,7 +195,7 @@ class MyApp extends StatelessWidget {
                                           text: 'Program ',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            color: Color(0xFF4a7a7a),
+                                            color: Color(0xFF003433),
                                           ),
                                         ),
                                         TextSpan(
@@ -203,7 +203,7 @@ class MyApp extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF4a7a7a),
+                                            color: Color(0xFF003433),
                                           ),
                                         ),
                                       ],
@@ -219,7 +219,7 @@ class MyApp extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.account_balance, color: Color(0xFF4a7a7a), size: 22),
+                                const Icon(Icons.account_balance, color: Color(0xFF003433), size: 22),
                                 const SizedBox(width: 8),
                                 RichText(
                                   text: const TextSpan(
@@ -228,7 +228,7 @@ class MyApp extends StatelessWidget {
                                         text: 'Department ', 
                                         style: TextStyle(
                                           fontSize: 15,
-                                          color: Color(0xFF4a7a7a),
+                                          color: Color(0xFF003433),
                                         ),
                                       ),
                                       TextSpan(
@@ -236,7 +236,7 @@ class MyApp extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: Color(0xFF4a7a7a),
+                                          color: Color(0xFF003433),
                                         ),
                                       ),
                                     ],
@@ -254,7 +254,7 @@ class MyApp extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.location_on,
-                                  color: Color(0xFF4a7a7a),
+                                  color: Color(0xFF003433),
                                   size: 22,
                                 ),
                                 SizedBox(width: 8),
@@ -263,7 +263,7 @@ class MyApp extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF4a7a7a),
+                                    color: Color(0xFF003433),
                                   ),
                                 ),
                               ],
@@ -277,7 +277,7 @@ class MyApp extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF4a7a7a),
+                          color: Color(0xFF003433),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(15),
                             bottomRight: Radius.circular(15),
@@ -305,7 +305,7 @@ class MyApp extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(
-                          color: const Color(0xFF4a7a7a),
+                          color: const Color(0xFF003433),
                           width: 5,
                         ),
                       ),

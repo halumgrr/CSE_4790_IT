@@ -43,10 +43,10 @@ class IDCardFormState extends State<IDCardForm> {
   final ImagePicker _picker = ImagePicker();
   
   // Variables for customization
-  Color cardBackgroundColor = Colors.white;
+  Color cardBackgroundColor = Color(0xFF013220);
   List<String> fontFamilies = ['Roboto', 'Arial', 'Times New Roman', 'Courier New', 'Georgia'];
   String currentFontFamily = 'Roboto';
-  List<Color> backgroundColors = [Colors.white, Colors.blue[50]!, Colors.green[50]!, Colors.orange[50]!, Colors.purple[50]!, Colors.pink[50]!];
+  List<Color> backgroundColors = [Colors.white, Colors.blue[50]!, Colors.green[50]!, Colors.orange[50]!, Colors.purple[50]!, Colors.pink[50]!, Color(0xFF013220)];
   int currentColorIndex = 0;
 
   @override
@@ -55,7 +55,7 @@ class IDCardFormState extends State<IDCardForm> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: const Text('IUT ID Card Generator'),
-        backgroundColor: const Color(0xFF4a7a7a),
+        backgroundColor: const Color(0xFF003433),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -71,7 +71,7 @@ class IDCardFormState extends State<IDCardForm> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4a7a7a),
+                    color: Color(0xFF003433),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -83,7 +83,7 @@ class IDCardFormState extends State<IDCardForm> {
                     labelText: 'Student ID',
                     hintText: 'e.g., 210041156',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.vpn_key, color: Color(0xFF4a7a7a)),
+                    prefixIcon: Icon(Icons.vpn_key, color: Color(0xFF003433)),
                   ),
                   keyboardType: TextInputType.number,
                 ),
@@ -96,7 +96,7 @@ class IDCardFormState extends State<IDCardForm> {
                     labelText: 'Student Name',
                     hintText: 'e.g., TAHSINUL ISLAM RUPOM',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person, color: Color(0xFF4a7a7a)),
+                    prefixIcon: Icon(Icons.person, color: Color(0xFF003433)),
                   ),
                   textCapitalization: TextCapitalization.characters,
                 ),
@@ -109,7 +109,7 @@ class IDCardFormState extends State<IDCardForm> {
                     labelText: 'Program',
                     hintText: 'e.g., B.Sc. in CSE',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.school, color: Color(0xFF4a7a7a)),
+                    prefixIcon: Icon(Icons.school, color: Color(0xFF003433)),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -121,7 +121,7 @@ class IDCardFormState extends State<IDCardForm> {
                     labelText: 'Department',
                     hintText: 'e.g., CSE',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.account_balance, color: Color(0xFF4a7a7a)),
+                    prefixIcon: Icon(Icons.account_balance, color: Color(0xFF003433)),
                   ),
                   textCapitalization: TextCapitalization.characters,
                 ),
@@ -134,7 +134,7 @@ class IDCardFormState extends State<IDCardForm> {
                     labelText: 'Country',
                     hintText: 'e.g., Bangladesh',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.location_on, color: Color(0xFF4a7a7a)),
+                    prefixIcon: Icon(Icons.location_on, color: Color(0xFF003433)),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -144,7 +144,7 @@ class IDCardFormState extends State<IDCardForm> {
                   width: double.infinity,
                   height: 250,
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF4a7a7a), width: 2),
+                    border: Border.all(color: const Color(0xFF003433), width: 2),
                     borderRadius: BorderRadius.circular(10),
                     color: selectedImageFile != null ? Colors.green[50] : Colors.grey[200],
                   ),
@@ -203,7 +203,7 @@ class IDCardFormState extends State<IDCardForm> {
                             const Icon(
                               Icons.add_photo_alternate,
                               size: 60,
-                              color: Color(0xFF4a7a7a),
+                              color: Color(0xFF003433),
                             ),
                             const SizedBox(height: 10),
                             Text(
@@ -230,7 +230,7 @@ class IDCardFormState extends State<IDCardForm> {
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4a7a7a),
+                                backgroundColor: const Color(0xFF003433),
                                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                               ),
                               child: const Text('Select Photo'),
@@ -274,7 +274,7 @@ class IDCardFormState extends State<IDCardForm> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4a7a7a),
+                    backgroundColor: const Color(0xFF003433),
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   ),
                   child: const Text(
@@ -313,9 +313,9 @@ class IDCardFormState extends State<IDCardForm> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4a7a7a),
-                              borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                              color: cardBackgroundColor,
+                              borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15),
                               ),
@@ -375,7 +375,7 @@ class IDCardFormState extends State<IDCardForm> {
                                   children: [
                                     const Icon(
                                       Icons.vpn_key,
-                                      color: Color(0xFF4a7a7a),
+                                      color: Color(0xFF003433),
                                       size: 22,
                                     ),
                                     const SizedBox(width: 8),
@@ -394,7 +394,7 @@ class IDCardFormState extends State<IDCardForm> {
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF4a7a7a),
+                                    color: const Color(0xFF003433),
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   child: Row(
@@ -430,7 +430,7 @@ class IDCardFormState extends State<IDCardForm> {
                                   children: [
                                     const Icon(
                                       Icons.person,
-                                      color: Color(0xFF4a7a7a),
+                                      color: Color(0xFF003433),
                                       size: 22,
                                     ),
                                     const SizedBox(width: 8),
@@ -450,7 +450,7 @@ class IDCardFormState extends State<IDCardForm> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF4a7a7a),
+                                    color: Color(0xFF003433),
                                     fontFamily: currentFontFamily,
                                   ),
                                 ),
@@ -461,7 +461,7 @@ class IDCardFormState extends State<IDCardForm> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.school, color:Color(0xFF4a7a7a), size: 22),
+                                    const Icon(Icons.school, color:Color(0xFF003433), size: 22),
                                     const SizedBox(width: 8),
                                     RichText(
                                       text: TextSpan(
@@ -470,7 +470,7 @@ class IDCardFormState extends State<IDCardForm> {
                                             text: 'Program ',
                                             style: TextStyle(
                                               fontSize: 15,
-                                              color: Color(0xFF4a7a7a),
+                                              color: Color(0xFF003433),
                                               fontFamily: currentFontFamily,
                                             ),
                                           ),
@@ -479,7 +479,7 @@ class IDCardFormState extends State<IDCardForm> {
                                             style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
-                                              color: Color(0xFF4a7a7a),
+                                              color: Color(0xFF003433),
                                               fontFamily: currentFontFamily,
                                             ),
                                           ),
@@ -495,7 +495,7 @@ class IDCardFormState extends State<IDCardForm> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.account_balance, color:Color(0xFF4a7a7a), size: 22),
+                                    const Icon(Icons.account_balance, color:Color(0xFF003433), size: 22),
                                     const SizedBox(width: 8),
                                     RichText(
                                       text: TextSpan(
@@ -504,7 +504,7 @@ class IDCardFormState extends State<IDCardForm> {
                                             text: 'Department ', 
                                             style: TextStyle(
                                               fontSize: 15,
-                                              color:Color(0xFF4a7a7a),
+                                              color:Color(0xFF003433),
                                               fontFamily: currentFontFamily,
                                             ),
                                           ),
@@ -513,7 +513,7 @@ class IDCardFormState extends State<IDCardForm> {
                                             style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
-                                              color: Color(0xFF4a7a7a),
+                                              color: Color(0xFF003433),
                                               fontFamily: currentFontFamily,
                                             ),
                                           ),
@@ -531,7 +531,7 @@ class IDCardFormState extends State<IDCardForm> {
                                   children: [
                                     const Icon(
                                       Icons.location_on,
-                                      color: Color(0xFF4a7a7a),
+                                      color: Color(0xFF003433),
                                       size: 22,
                                     ),
                                     const SizedBox(width: 8),
@@ -540,7 +540,7 @@ class IDCardFormState extends State<IDCardForm> {
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF4a7a7a),
+                                        color: Color(0xFF003433),
                                         fontFamily: currentFontFamily,
                                       ),
                                     ),
@@ -554,9 +554,9 @@ class IDCardFormState extends State<IDCardForm> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 15),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4a7a7a),
-                              borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                              color: cardBackgroundColor,
+                              borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(15),
                                 bottomRight: Radius.circular(15),
                               ),
@@ -584,7 +584,7 @@ class IDCardFormState extends State<IDCardForm> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                              color: const Color(0xFF4a7a7a),
+                              color: const Color(0xFF003433),
                               width: 5,
                             ),
                           ),
@@ -622,7 +622,7 @@ class IDCardFormState extends State<IDCardForm> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4a7a7a),
+                            backgroundColor: const Color(0xFF003433),
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -647,7 +647,7 @@ class IDCardFormState extends State<IDCardForm> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4a7a7a),
+                            backgroundColor: const Color(0xFF003433),
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -682,7 +682,7 @@ class IDCardFormState extends State<IDCardForm> {
                       icon: const Icon(Icons.edit),
                       label: const Text('Edit Details'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4a7a7a),
+                        backgroundColor: const Color(0xFF003433),
                         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
                       ),
                     ),
