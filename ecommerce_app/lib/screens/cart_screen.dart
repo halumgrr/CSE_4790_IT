@@ -325,15 +325,7 @@ class CartItemCard extends StatelessWidget {
               child: product['image_urls'] != null && (product['image_urls'] as List).isNotEmpty
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        product['image_urls'][0],
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.shopping_basket,
-                          size: 32,
-                          color: Colors.grey[400],
-                        ),
-                      ),
+                      child: _buildProductImage(product['image_urls'][0]),
                     )
                   : Icon(
                       Icons.shopping_basket,
@@ -458,5 +450,30 @@ class CartItemCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildProductImage(String imagePath) {
+    // Check if it's an asset image or network image
+    if (imagePath.startsWith('assets/')) {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Icon(
+          Icons.shopping_basket,
+          size: 32,
+          color: Colors.grey[400],
+        ),
+      );
+    } else {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Icon(
+          Icons.shopping_basket,
+          size: 32,
+          color: Colors.grey[400],
+        ),
+      );
+    }
   }
 }

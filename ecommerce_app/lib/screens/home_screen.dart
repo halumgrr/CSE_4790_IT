@@ -147,7 +147,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GhorerBazar'),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/ghorer_bazar_logo.webp',
+              height: 32,
+              errorBuilder: (context, error, stackTrace) => const Text('GhorerBazar'),
+            ),
+            const SizedBox(width: 8),
+            const Text('GhorerBazar'),
+          ],
+        ),
         backgroundColor: Colors.green[700],
         foregroundColor: Colors.white,
         elevation: 0,
@@ -413,11 +423,7 @@ class ProductCard extends StatelessWidget {
               child: product['image_urls'] != null && (product['image_urls'] as List).isNotEmpty
                   ? ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                      child: Image.network(
-                        product['image_urls'][0],
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-                      ),
+                      child: _buildProductImage(product['image_urls'][0]),
                     )
                   : _buildPlaceholder(),
             ),
@@ -535,6 +541,25 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[400],
       ),
     );
+  }
+
+  Widget _buildProductImage(String imagePath) {
+    // Check if it's an asset image or network image
+    if (imagePath.startsWith('assets/')) {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    } else {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    }
   }
 }
 
