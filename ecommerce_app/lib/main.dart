@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'supabase_client.dart';
+import 'auth_handler.dart';
 import 'screens/login_screen.dart';
 import 'screens/reset_password_screen.dart';
 
@@ -14,18 +15,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TradePartner',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return AuthStateListener(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TradePartner',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const LoginScreen(),
+          '/reset-password': (context) => const ResetPasswordScreen(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        '/reset-password': (context) => const ResetPasswordScreen(),
-      },
     );
   }
 }

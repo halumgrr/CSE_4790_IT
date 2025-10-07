@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabase_client.dart';
+import '../auth_handler.dart';
 import 'login_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       await supabase.auth.resetPasswordForEmail(
         _emailController.text.trim(),
-        redirectTo: 'http://localhost:18080/#/reset-password',
+        redirectTo: AuthHandler.getRedirectUrl(),
       );
       
       setState(() {
@@ -151,7 +152,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.green.shade50,
-                    border: Border.all(color: Colors.green.shade200),
+                    border: Border.all(color: const Color.fromARGB(255, 191, 247, 193)),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
