@@ -164,9 +164,9 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Column(
                         children: [
                           Text(
-                            'AI Chatbot',
+                            'Sage',
                             style: TextStyle(
-                              fontSize: 32,
+                              fontSize: 38,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               shadows: [
@@ -180,7 +180,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Powered by Qwen2.5',
+                            'Your AI Companion',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white.withOpacity(0.9),
