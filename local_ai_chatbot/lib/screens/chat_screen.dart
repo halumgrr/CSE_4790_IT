@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/message.dart';
+import '../models/chat_session.dart';
 import '../services/ai_service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -14,67 +15,59 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final AIService _aiService = AIService();
   bool _isLoading = false;
+  bool _sidebarOpen = false;
   
-  final List<Message> _messages = [
-    Message(text: "Hello! I'm Sage, your AI companion powered by Qwen2.5. How can I help you today?", isUser: false),
-  ];
+  List<ChatSession> _chatSessions = [];
+  ChatSession? _currentSession;
 
-  void _startNewChat() async {
-    // Show confirmation dialog if there are messages other than the welcome message
-    if (_messages.length > 1) {
-      final shouldClear = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Start New Chat'),
-            content: const Text('Are you sure you want to start a new conversation? This will clear your current chat history.'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text('Start New Chat'),
-              ),
-            ],
-          );
-        },
-      );
+  @override
+  void initState() {
+    super.initState();
+    _createNewChat();
+  }
 
-      if (shouldClear != true) return;
-    }
+  void _createNewChat() {
+    final newSession = ChatSession(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: 'New Chat',
+      createdAt: DateTime.now(),
+      messages: [
+        Message(text: "Hello! I'm Sage, your AI companion powered by Qwen2.5. How can I help you today?", isUser: false),
+      ],
+    );
 
     setState(() {
-      _messages.clear();
-      _messages.add(
-        Message(text: "Hello! I'm Sage, your AI companion powered by Qwen2.5. How can I help you today?", isUser: false),
-      );
+      _chatSessions.insert(0, newSession);
+      _currentSession = newSession;
       _isLoading = false;
     });
     _messageController.clear();
     _scrollToBottom();
   }
 
+  void _selectChat(ChatSession session) {
+    setState(() {
+      _currentSession = session;
+      _sidebarOpen = false;
+    });
+    _scrollToBottom();
+  }
+
+  void _toggleSidebar() {
+    setState(() {
+      _sidebarOpen = !_sidebarOpen;
+    });
+  }
+
   void _sendMessage() async {
-    if (_messageController.text.trim().isEmpty) return;
+    if (_messageController.text.trim().isEmpty || _currentSession == null) return;
 
     final userMessage = _messageController.text.trim();
     _messageController.clear();
 
-    // Add user message to chat
+    // Add user message to current session
     setState(() {
-      _messages.add(Message(text: userMessage, isUser: true));
+      _currentSession!.messages.add(Message(text: userMessage, isUser: true));
       _isLoading = true;
     });
     _scrollToBottom();
@@ -84,8 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
       final conversationHistory = <Map<String, String>>[];
       
       // Add previous messages (excluding the current user message we just added)
-      for (int i = 0; i < _messages.length - 1; i++) {
-        final msg = _messages[i];
+      for (int i = 0; i < _currentSession!.messages.length - 1; i++) {
+        final msg = _currentSession!.messages[i];
         conversationHistory.add({
           'role': msg.isUser ? 'user' : 'assistant',
           'content': msg.text,
@@ -94,12 +87,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
       // Add placeholder for AI response
       setState(() {
-        _messages.add(Message(text: '', isUser: false));
+        _currentSession!.messages.add(Message(text: '', isUser: false));
         _isLoading = false;
       });
 
       String accumulatedResponse = '';
-      final aiMessageIndex = _messages.length - 1;
+      final aiMessageIndex = _currentSession!.messages.length - 1;
 
       // Listen to the streaming response
       await for (final chunk in _aiService.sendMessageStream(userMessage, conversationHistory)) {
@@ -107,7 +100,12 @@ class _ChatScreenState extends State<ChatScreen> {
         
         // Update the AI message with accumulated text
         setState(() {
-          _messages[aiMessageIndex] = Message(text: accumulatedResponse, isUser: false);
+          _currentSession!.messages[aiMessageIndex] = Message(text: accumulatedResponse, isUser: false);
+          // Update the session in the list
+          final sessionIndex = _chatSessions.indexWhere((s) => s.id == _currentSession!.id);
+          if (sessionIndex != -1) {
+            _chatSessions[sessionIndex] = _currentSession!.copyWith(messages: _currentSession!.messages);
+          }
         });
         
         _scrollToBottom();
@@ -115,15 +113,15 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       // Handle errors
       setState(() {
-        if (_messages.isNotEmpty && !_messages.last.isUser) {
+        if (_currentSession!.messages.isNotEmpty && !_currentSession!.messages.last.isUser) {
           // Update the last AI message with error
-          _messages[_messages.length - 1] = Message(
+          _currentSession!.messages[_currentSession!.messages.length - 1] = Message(
             text: "Sorry, I couldn't process your message. Please make sure LM Studio is running and try again.",
             isUser: false,
           );
         } else {
           // Add new error message
-          _messages.add(Message(
+          _currentSession!.messages.add(Message(
             text: "Sorry, I couldn't process your message. Please make sure LM Studio is running and try again.",
             isUser: false,
           ));
@@ -150,130 +148,250 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: const Text(
-          'Sage',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_comment_outlined, color: Colors.white),
-            onPressed: _startNewChat,
-            tooltip: 'New Chat',
-          ),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondary,
-              Theme.of(context).colorScheme.tertiary,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Chat messages area
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  itemCount: _messages.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _messages.length && _isLoading) {
-                  // Show loading indicator as the last item
-                  return _buildLoadingIndicator();
-                }
-                final message = _messages[index];
-                return _buildMessageBubble(message);
-              },
-            ),
-          ),
-              // Message input area
-              Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+      body: Row(
+        children: [
+          // Sidebar
+          if (_sidebarOpen)
+            Container(
+              width: 280,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                border: Border(
+                  right: BorderSide(color: Colors.grey[300]!, width: 1),
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Ask Sage anything...',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[600],
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        onSubmitted: (_) => _isLoading ? null : _sendMessage(),
-                        textInputAction: TextInputAction.send,
-                        enabled: !_isLoading,
-                        style: const TextStyle(fontSize: 16),
+              ),
+              child: Column(
+                children: [
+                  // Sidebar Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.secondary,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: IconButton(
-                        onPressed: _isLoading ? null : _sendMessage,
-                        icon: _isLoading 
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Icon(
-                              Icons.send_rounded,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.chat_bubble_outline, color: Colors.white),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Text(
+                            'Chat History',
+                            style: TextStyle(
                               color: Colors.white,
-                              size: 24,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                      ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          onPressed: _createNewChat,
+                          tooltip: 'New Chat',
+                        ),
+                      ],
                     ),
+                  ),
+                  // Chat List
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _chatSessions.length,
+                      itemBuilder: (context, index) {
+                        final session = _chatSessions[index];
+                        final isActive = _currentSession?.id == session.id;
+                        
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 4),
+                          decoration: BoxDecoration(
+                            color: isActive ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            title: Text(
+                              session.preview,
+                              style: TextStyle(
+                                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                                fontSize: 14,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              session.timeAgo,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                            onTap: () => _selectChat(session),
+                            trailing: isActive 
+                              ? Icon(
+                                  Icons.circle,
+                                  size: 8,
+                                  color: Theme.of(context).colorScheme.primary,
+                                )
+                              : null,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          
+          // Main Chat Area
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.secondary,
+                    Theme.of(context).colorScheme.tertiary,
                   ],
                 ),
               ),
-            ],
+              child: Column(
+                children: [
+                  // App Bar
+                  SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.white),
+                            onPressed: _toggleSidebar,
+                            tooltip: 'Toggle Sidebar',
+                          ),
+                          const Expanded(
+                            child: Text(
+                              'Sage',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_comment_outlined, color: Colors.white),
+                            onPressed: _createNewChat,
+                            tooltip: 'New Chat',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  // Chat Messages
+                  Expanded(
+                    child: _currentSession == null 
+                      ? const Center(
+                          child: Text(
+                            'Select a chat to start conversation',
+                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                          itemCount: _currentSession!.messages.length + (_isLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _currentSession!.messages.length && _isLoading) {
+                              return _buildLoadingIndicator();
+                            }
+                            final message = _currentSession!.messages[index];
+                            return _buildMessageBubble(message);
+                          },
+                        ),
+                  ),
+                  
+                  // Message Input
+                  if (_currentSession != null)
+                    Container(
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.95),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              decoration: InputDecoration(
+                                hintText: 'Ask Sage anything...',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onSubmitted: (_) => _isLoading ? null : _sendMessage(),
+                              textInputAction: TextInputAction.send,
+                              enabled: !_isLoading,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: IconButton(
+                              onPressed: _isLoading ? null : _sendMessage,
+                              icon: _isLoading 
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.send_rounded,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
