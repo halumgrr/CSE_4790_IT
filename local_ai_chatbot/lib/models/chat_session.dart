@@ -53,4 +53,26 @@ class ChatSession {
       messages: messages ?? this.messages,
     );
   }
+
+  // Convert ChatSession to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'messages': messages.map((message) => message.toJson()).toList(),
+    };
+  }
+
+  // Create ChatSession from JSON
+  factory ChatSession.fromJson(Map<String, dynamic> json) {
+    return ChatSession(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int),
+      messages: (json['messages'] as List<dynamic>)
+          .map((messageJson) => Message.fromJson(messageJson as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 }
