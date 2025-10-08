@@ -19,6 +19,53 @@ class _ChatScreenState extends State<ChatScreen> {
     Message(text: "Hello! I'm Sage, your AI companion powered by Qwen2.5. How can I help you today?", isUser: false),
   ];
 
+  void _startNewChat() async {
+    // Show confirmation dialog if there are messages other than the welcome message
+    if (_messages.length > 1) {
+      final shouldClear = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Start New Chat'),
+            content: const Text('Are you sure you want to start a new conversation? This will clear your current chat history.'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('Start New Chat'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (shouldClear != true) return;
+    }
+
+    setState(() {
+      _messages.clear();
+      _messages.add(
+        Message(text: "Hello! I'm Sage, your AI companion powered by Qwen2.5. How can I help you today?", isUser: false),
+      );
+      _isLoading = false;
+    });
+    _messageController.clear();
+    _scrollToBottom();
+  }
+
   void _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
@@ -118,10 +165,9 @@ class _ChatScreenState extends State<ChatScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              // We'll implement new chat functionality later
-            },
+            icon: const Icon(Icons.add_comment_outlined, color: Colors.white),
+            onPressed: _startNewChat,
+            tooltip: 'New Chat',
           ),
         ],
       ),
