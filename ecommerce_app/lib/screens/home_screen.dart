@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../supabase_client.dart';
 import '../database_service.dart';
 import 'login_screen.dart';
-import 'products_screen.dart';
 import 'cart_screen.dart';
+import 'products_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const ProductsScreen(),
     const CartScreen(),
     const ProfilePage(),
   ];
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == 2) { // Cart page
+    if (index == 1) { // Cart page (now index 1 instead of 2)
       _updateCartCount();
     }
   }
@@ -63,10 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Products',
           ),
           BottomNavigationBarItem(
             icon: Stack(
@@ -131,15 +126,19 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadData() async {
     try {
       final categoriesData = await DatabaseService.getCategories();
-      final productsData = await DatabaseService.getProducts(isFeatured: true, limit: 6);
+      final productsData = await DatabaseService.getProducts(); // Get ALL products
       
-      setState(() {
-        categories = categoriesData;
-        featuredProducts = productsData;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          categories = categoriesData;
+          featuredProducts = productsData; // Will contain all products
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -165,10 +164,12 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Navigate to products screen with search focus
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProductsScreen()),
+              // Search functionality - can be implemented later
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Search functionality coming soon!'),
+                  duration: Duration(seconds: 1),
+                ),
               );
             },
           ),
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                   // Hero Banner
                   Container(
                     width: double.infinity,
-                    height: 200,
+                    height: 180,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Colors.green[700]!, Colors.green[500]!],
@@ -195,23 +196,23 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '🌿 GhorerBazar 🌿',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Fresh Organic Products for Healthy Living',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white70,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          // Text(
+                          //   '🌿 GhorerBazar 🌿',
+                          //   style: TextStyle(
+                          //     fontSize: 24,
+                          //     fontWeight: FontWeight.bold,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
+                          // SizedBox(height: 8),
+                          // Text(
+                          //   'Fresh Organic Products for Healthy Living',
+                          //   style: TextStyle(
+                          //     fontSize: 14,
+                          //     color: Colors.white70,
+                          //   ),
+                          //   textAlign: TextAlign.center,
+                          // ),
                         ],
                       ),
                     ),
@@ -225,31 +226,38 @@ class _HomePageState extends State<HomePage> {
                         const Text(
                           'Shop by Category',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 12),
                         SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: categories.length,
-                            itemBuilder: (context, index) {
-                              final category = categories[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: GestureDetector(
+                          height: 90,
+                          child: Center(
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount: categories.length,
+                              itemBuilder: (context, index) {
+                                final category = categories[index];
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: GestureDetector(
                                   onTap: () {
+                                    // Navigate to products screen with category filter
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const ProductsScreen(),
+                                        builder: (context) => ProductsScreen(
+                                          initialCategoryId: category['id'],
+                                        ),
                                       ),
                                     );
                                   },
                                   child: Container(
-                                    width: 80,
+                                    width: 75,
                                     decoration: BoxDecoration(
                                       color: Colors.green[50],
                                       borderRadius: BorderRadius.circular(12),
@@ -257,17 +265,18 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Icon(
                                           _getCategoryIcon(category['name']),
-                                          size: 32,
+                                          size: 28,
                                           color: Colors.green[700],
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: 6),
                                         Text(
                                           category['name'],
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.green[800],
                                           ),
@@ -281,7 +290,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               );
                             },
-                          ),
+                          )
+                        ),
                         ),
                       ],
                     ),
@@ -292,49 +302,38 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Featured Products',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ProductsScreen(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'View All',
-                                style: TextStyle(color: Colors.green[700]),
-                              ),
-                            ),
-                          ],
+                        const Text(
+                          'Our Products',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 12),
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.75,
-                          ),
-                          itemCount: featuredProducts.length,
-                          itemBuilder: (context, index) {
-                            return ProductCard(
-                              product: featuredProducts[index],
-                              onAddToCart: () => _addToCart(featuredProducts[index]['id']),
-                            );
-                          },
+                        SizedBox(
+                          height: 240,
+                          child: featuredProducts.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    'No products available',
+                                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  itemCount: featuredProducts.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      width: 160,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: ProductCard(
+                                        product: featuredProducts[index],
+                                        onAddToCart: () => _addToCart(featuredProducts[index]['id']),
+                                      ),
+                                    );
+                                  },
+                                ),
                         ),
                       ],
                     ),
@@ -432,7 +431,7 @@ class ProductCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -440,31 +439,31 @@ class ProductCard extends StatelessWidget {
                   Text(
                     product['name'] ?? '',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (product['name_bn'] != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
                       product['name_bn'],
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 9,
                         color: Colors.grey[600],
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   // Weight/Unit
                   if (product['weight'] != null)
                     Text(
                       '${product['weight']} ${product['unit'] ?? ''}',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 9,
                         color: Colors.grey[600],
                       ),
                     ),
@@ -480,7 +479,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(originalPrice),
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 9,
                                   decoration: TextDecoration.lineThrough,
                                   color: Colors.grey,
                                 ),
@@ -488,7 +487,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(effectivePrice),
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[600],
                                 ),
@@ -497,7 +496,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(effectivePrice),
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -509,12 +508,12 @@ class ProductCard extends StatelessWidget {
                         icon: Icon(
                           Icons.add_shopping_cart,
                           color: Colors.green[700],
-                          size: 20,
+                          size: 16,
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.green[50],
                           padding: const EdgeInsets.all(4),
-                          minimumSize: const Size(32, 32),
+                          minimumSize: const Size(28, 28),
                         ),
                       ),
                     ],
@@ -537,7 +536,7 @@ class ProductCard extends StatelessWidget {
       ),
       child: Icon(
         Icons.shopping_basket,
-        size: 40,
+        size: 32,
         color: Colors.grey[400],
       ),
     );

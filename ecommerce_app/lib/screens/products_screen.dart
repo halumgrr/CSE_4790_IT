@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../database_service.dart';
 
 class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+  final String? initialCategoryId;
+  const ProductsScreen({super.key, this.initialCategoryId});
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
@@ -20,6 +21,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
+    selectedCategoryId = widget.initialCategoryId;
     _loadData();
   }
 
@@ -29,15 +31,17 @@ class _ProductsScreenState extends State<ProductsScreen> {
       final categoriesData = await DatabaseService.getCategories();
       final productsData = await DatabaseService.getProducts();
       
-      setState(() {
-        categories = categoriesData;
-        products = productsData;
-        filteredProducts = productsData;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() => isLoading = false);
       if (mounted) {
+        setState(() {
+          categories = categoriesData;
+          products = productsData;
+          filteredProducts = productsData;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading data: $e'),
@@ -205,7 +209,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.75,
+                            childAspectRatio: 1.0,
                           ),
                           itemCount: filteredProducts.length,
                           itemBuilder: (context, index) {
@@ -246,7 +250,7 @@ class ProductCard extends StatelessWidget {
         children: [
           // Product Image
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -265,7 +269,7 @@ class ProductCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -273,31 +277,31 @@ class ProductCard extends StatelessWidget {
                   Text(
                     product['name'] ?? '',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (product['name_bn'] != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
                       product['name_bn'],
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 9,
                         color: Colors.grey[600],
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   // Weight/Unit
                   if (product['weight'] != null)
                     Text(
                       '${product['weight']} ${product['unit'] ?? ''}',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 9,
                         color: Colors.grey[600],
                       ),
                     ),
@@ -313,7 +317,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(originalPrice),
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 9,
                                   decoration: TextDecoration.lineThrough,
                                   color: Colors.grey,
                                 ),
@@ -321,7 +325,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(effectivePrice),
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[600],
                                 ),
@@ -330,7 +334,7 @@ class ProductCard extends StatelessWidget {
                               Text(
                                 DatabaseService.formatPrice(effectivePrice),
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -342,12 +346,12 @@ class ProductCard extends StatelessWidget {
                         icon: Icon(
                           Icons.add_shopping_cart,
                           color: Colors.green[700],
-                          size: 20,
+                          size: 16,
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.green[50],
                           padding: const EdgeInsets.all(4),
-                          minimumSize: const Size(32, 32),
+                          minimumSize: const Size(28, 28),
                         ),
                       ),
                     ],
@@ -370,7 +374,7 @@ class ProductCard extends StatelessWidget {
       ),
       child: Icon(
         Icons.shopping_basket,
-        size: 40,
+        size: 32,
         color: Colors.grey[400],
       ),
     );
