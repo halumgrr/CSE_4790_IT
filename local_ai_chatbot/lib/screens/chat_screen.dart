@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/message.dart';
+import '../services/ai_service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -11,35 +12,80 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final AIService _aiService = AIService();
+  bool _isLoading = false;
+  
   final List<Message> _messages = [
-    Message(text: "Hello! I'm your AI assistant. How can I help you today?", isUser: false),
-    Message(text: "Hi there! Can you help me with some questions?", isUser: true),
-    Message(text: "Of course! I'd be happy to help. What would you like to know?", isUser: false),
+    Message(text: "Hello! I'm your AI assistant powered by Qwen2.5. How can I help you today?", isUser: false),
   ];
 
-  void _sendMessage() {
+  void _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
-    setState(() {
-      _messages.add(Message(
-        text: _messageController.text.trim(),
-        isUser: true,
-      ));
-    });
-
+    final userMessage = _messageController.text.trim();
     _messageController.clear();
+
+    // Add user message to chat
+    setState(() {
+      _messages.add(Message(text: userMessage, isUser: true));
+      _isLoading = true;
+    });
     _scrollToBottom();
 
-    // Simulate AI response (we'll replace this with actual LM Studio integration later)
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    try {
+      // Build conversation history for context
+      final conversationHistory = <Map<String, String>>[];
+      
+      // Add previous messages (excluding the current user message we just added)
+      for (int i = 0; i < _messages.length - 1; i++) {
+        final msg = _messages[i];
+        conversationHistory.add({
+          'role': msg.isUser ? 'user' : 'assistant',
+          'content': msg.text,
+        });
+      }
+
+      // Add placeholder for AI response
       setState(() {
-        _messages.add(Message(
-          text: "Thanks for your message! This is a placeholder response. Soon I'll be powered by Qwen2.5!",
-          isUser: false,
-        ));
+        _messages.add(Message(text: '', isUser: false));
+        _isLoading = false;
       });
-      _scrollToBottom();
-    });
+
+      String accumulatedResponse = '';
+      final aiMessageIndex = _messages.length - 1;
+
+      // Listen to the streaming response
+      await for (final chunk in _aiService.sendMessageStream(userMessage, conversationHistory)) {
+        accumulatedResponse += chunk;
+        
+        // Update the AI message with accumulated text
+        setState(() {
+          _messages[aiMessageIndex] = Message(text: accumulatedResponse, isUser: false);
+        });
+        
+        _scrollToBottom();
+      }
+    } catch (e) {
+      // Handle errors
+      setState(() {
+        if (_messages.isNotEmpty && !_messages.last.isUser) {
+          // Update the last AI message with error
+          _messages[_messages.length - 1] = Message(
+            text: "Sorry, I couldn't process your message. Please make sure LM Studio is running and try again.",
+            isUser: false,
+          );
+        } else {
+          // Add new error message
+          _messages.add(Message(
+            text: "Sorry, I couldn't process your message. Please make sure LM Studio is running and try again.",
+            isUser: false,
+          ));
+        }
+        _isLoading = false;
+      });
+    }
+    
+    _scrollToBottom();
   }
 
   void _scrollToBottom() {
@@ -69,8 +115,12 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
+              itemCount: _messages.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == _messages.length && _isLoading) {
+                  // Show loading indicator as the last item
+                  return _buildLoadingIndicator();
+                }
                 final message = _messages[index];
                 return _buildMessageBubble(message);
               },
@@ -106,15 +156,22 @@ class _ChatScreenState extends State<ChatScreen> {
                         vertical: 12,
                       ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
+                    onSubmitted: (_) => _isLoading ? null : _sendMessage(),
                     textInputAction: TextInputAction.send,
+                    enabled: !_isLoading,
                   ),
                 ),
                 const SizedBox(width: 8),
                 FloatingActionButton(
-                  onPressed: _sendMessage,
+                  onPressed: _isLoading ? null : _sendMessage,
                   mini: true,
-                  child: const Icon(Icons.send),
+                  child: _isLoading 
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.send),
                 ),
               ],
             ),
@@ -181,6 +238,62 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            radius: 16,
+            child: const Icon(
+              Icons.smart_toy,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'AI is thinking...',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
