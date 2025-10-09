@@ -3,7 +3,7 @@ import '../models/message.dart';
 import '../models/chat_session.dart';
 import '../services/ai_service.dart';
 import '../services/chat_storage_service.dart';
-import '../widgets/message_renderer.dart';
+import '../widgets/animated_message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -12,7 +12,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final AIService _aiService = AIService();
@@ -22,10 +22,39 @@ class _ChatScreenState extends State<ChatScreen> {
   List<ChatSession> _chatSessions = [];
   ChatSession? _currentSession;
 
+  // Animation controllers for staggered chat items
+  late AnimationController _chatItemsController;
+  List<Animation<double>> _chatItemAnimations = [];
+
   @override
   void initState() {
     super.initState();
+    _chatItemsController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
     _loadSavedChats();
+  }
+
+  void _setupChatItemAnimations() {
+    _chatItemAnimations.clear();
+    for (int i = 0; i < _chatSessions.length; i++) {
+      final startTime = i * 0.1; // 100ms stagger between items
+      final endTime = startTime + 0.3; // Each animation lasts 300ms
+      
+      _chatItemAnimations.add(
+        CurvedAnimation(
+          parent: _chatItemsController,
+          curve: Interval(startTime, endTime.clamp(0.0, 1.0), curve: Curves.easeOutBack),
+        ),
+      );
+    }
+  }
+
+  void _animateChatItems() {
+    _setupChatItemAnimations();
+    _chatItemsController.reset();
+    _chatItemsController.forward();
   }
 
   Future<void> _loadSavedChats() async {
@@ -76,6 +105,11 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController.clear();
     _scrollToBottom();
     
+    // Trigger chat item animations if sidebar is open
+    if (_sidebarOpen) {
+      _animateChatItems();
+    }
+    
     // Save to storage
     _saveChatsToStorage();
   }
@@ -100,6 +134,14 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       _sidebarOpen = !_sidebarOpen;
     });
+    
+    // Animate chat items when sidebar opens
+    if (_sidebarOpen && _chatSessions.isNotEmpty) {
+      // Small delay to let the sidebar animation start
+      Future.delayed(const Duration(milliseconds: 200), () {
+        _animateChatItems();
+      });
+    }
   }
 
   void _deleteChat(ChatSession session) async {
@@ -303,10 +345,12 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       body: Row(
         children: [
-          // Sidebar
-          if (_sidebarOpen)
-            Container(
-              width: 280,
+          // Animated Sidebar
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            width: _sidebarOpen ? 280 : 0,
+            child: _sidebarOpen ? Container(
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 border: Border(
@@ -358,27 +402,42 @@ class _ChatScreenState extends State<ChatScreen> {
                         final session = _chatSessions[index];
                         final isActive = _currentSession?.id == session.id;
                         
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          decoration: BoxDecoration(
-                            color: isActive ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: GestureDetector(
-                            onLongPress: () {
-                              // Show context menu on long press
-                              if (_chatSessions.length > 1) {
-                                _showChatContextMenu(context, session);
-                              }
-                            },
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              title: Text(
-                                session.preview,
-                                style: TextStyle(
-                                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                  fontSize: 14,
-                                ),
+                        // Get animation for this item (with bounds checking)
+                        final animation = index < _chatItemAnimations.length 
+                            ? _chatItemAnimations[index] 
+                            : kAlwaysCompleteAnimation;
+                        
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(-1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 4),
+                                  decoration: BoxDecoration(
+                                    color: isActive ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: GestureDetector(
+                                    onLongPress: () {
+                                      // Show context menu on long press
+                                      if (_chatSessions.length > 1) {
+                                        _showChatContextMenu(context, session);
+                                      }
+                                    },
+                                    child: ListTile(
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      title: Text(
+                                        session.preview,
+                                        style: TextStyle(
+                                          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                                          fontSize: 14,
+                                        ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -421,13 +480,18 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                           ),
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
                   ),
                 ],
               ),
-            ),
+            ) : null,
+          ),
           
           // Main Chat Area
           Expanded(
@@ -495,7 +559,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               return _buildLoadingIndicator();
                             }
                             final message = _currentSession!.messages[index];
-                            return _buildMessageBubble(message);
+                            return AnimatedMessageBubble(
+                              message: message,
+                              index: index,
+                            );
                           },
                         ),
                   ),
@@ -574,114 +641,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessageBubble(Message message) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!message.isUser) ...[
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.secondary,
-                    Theme.of(context).colorScheme.tertiary,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.auto_awesome,
-                size: 20,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 12),
-          ],
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              decoration: BoxDecoration(
-                gradient: message.isUser
-                    ? LinearGradient(
-                        colors: [
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.secondary,
-                        ],
-                      )
-                    : null,
-                color: message.isUser
-                    ? null
-                    : Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: message.isUser 
-                      ? const Radius.circular(20) 
-                      : const Radius.circular(6),
-                  bottomRight: message.isUser 
-                      ? const Radius.circular(6) 
-                      : const Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: MessageRenderer(
-                text: message.text,
-                isUser: message.isUser,
-              ),
-            ),
-          ),
-          if (message.isUser) ...[
-            const SizedBox(width: 12),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.person_rounded,
-                size: 20,
-                color: Colors.white,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -770,6 +729,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _chatItemsController.dispose();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
