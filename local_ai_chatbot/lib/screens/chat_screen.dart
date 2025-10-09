@@ -3,6 +3,7 @@ import '../models/message.dart';
 import '../models/chat_session.dart';
 import '../services/ai_service.dart';
 import '../services/chat_storage_service.dart';
+import '../widgets/message_renderer.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -647,16 +648,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: message.isUser
-                      ? Colors.white
-                      : Colors.grey[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
+              child: MessageRenderer(
+                text: message.text,
+                isUser: message.isUser,
               ),
             ),
           ),
