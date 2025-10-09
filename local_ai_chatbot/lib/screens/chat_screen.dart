@@ -4,6 +4,7 @@ import '../models/chat_session.dart';
 import '../services/ai_service.dart';
 import '../services/chat_storage_service.dart';
 import '../widgets/animated_message_bubble.dart';
+import '../utils/animation_tracker.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -102,6 +103,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _currentSession = newSession;
       _isLoading = false;
     });
+    
     _messageController.clear();
     _scrollToBottom();
     
@@ -124,10 +126,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _currentSession = session;
       _sidebarOpen = false;
     });
+    
     _scrollToBottom();
     
     // Save current session to storage
     ChatStorageService.saveCurrentSessionId(session.id);
+  }
+
+  bool _shouldAnimateMessage(Message message) {
+    return AnimationTracker.shouldAnimate(message.id);
   }
 
   void _toggleSidebar() {
@@ -262,6 +269,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _currentSession!.messages.add(Message(text: userMessage, isUser: true));
       _isLoading = true;
     });
+    
     _scrollToBottom();
 
     try {
@@ -278,13 +286,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       }
 
       // Add placeholder for AI response
+      final aiMessageIndex = _currentSession!.messages.length;
       setState(() {
         _currentSession!.messages.add(Message(text: '', isUser: false));
         _isLoading = false;
       });
 
       String accumulatedResponse = '';
-      final aiMessageIndex = _currentSession!.messages.length - 1;
 
       // Listen to the streaming response
       await for (final chunk in _aiService.sendMessageStream(userMessage, conversationHistory)) {
@@ -562,6 +570,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                             return AnimatedMessageBubble(
                               message: message,
                               index: index,
+                              shouldAnimate: _shouldAnimateMessage(message),
                             );
                           },
                         ),

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import '../models/message.dart';
+import '../utils/animation_tracker.dart';
 import 'message_renderer.dart';
 
 class AnimatedMessageBubble extends StatefulWidget {
   final Message message;
   final int index;
+  final bool shouldAnimate;
+  final VoidCallback? onAnimationComplete;
 
   const AnimatedMessageBubble({
     super.key,
     required this.message,
     required this.index,
+    this.shouldAnimate = false,
+    this.onAnimationComplete,
   });
 
   @override
@@ -37,7 +42,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
         : const Offset(-1.0, 0.0); // Slide from left for AI
 
     _slideAnimation = Tween<Offset>(
-      begin: slideDirection,
+      begin: widget.shouldAnimate ? slideDirection : Offset.zero,
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -45,19 +50,31 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
     ));
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
+      begin: widget.shouldAnimate ? 0.0 : 1.0,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     ));
 
-    // Start animation with delay based on index
-    Future.delayed(Duration(milliseconds: widget.index * 150), () {
-      if (mounted) {
-        _controller.forward();
-      }
-    });
+    // Start animation with delay based on index, but only if shouldAnimate is true
+    if (widget.shouldAnimate) {
+      Future.delayed(Duration(milliseconds: widget.index * 150), () {
+        if (mounted) {
+          _controller.forward().then((_) {
+            // Mark this message as animated globally
+            AnimationTracker.markAsAnimated(widget.message.id);
+            // Notify parent that animation is complete
+            if (widget.onAnimationComplete != null) {
+              widget.onAnimationComplete!();
+            }
+          });
+        }
+      });
+    } else {
+      // If not animating, set to completed state immediately
+      _controller.value = 1.0;
+    }
   }
 
   @override
