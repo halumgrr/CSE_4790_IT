@@ -4,8 +4,8 @@ A Flutter application that generates customizable ID cards for Islamic Universit
 
 ## Screenshots
 
-| Form Input | Generated Card | Customization |
-|------------|---------------|---------------|
+| Form Input | Customization |
+|------------|---------------|
 | ![Form Input](screenshots/form.png) | ![Customization(Font+BGColor+Edit+Reset Buttons)](screenshots/customization.png) |
 
 ## Features
