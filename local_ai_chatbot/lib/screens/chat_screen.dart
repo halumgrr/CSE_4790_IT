@@ -4,6 +4,7 @@ import '../models/chat_session.dart';
 import '../services/ai_service.dart';
 import '../services/chat_storage_service.dart';
 import '../widgets/animated_message_bubble.dart';
+import '../widgets/rive_avatar_widget.dart';
 import '../utils/animation_tracker.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final AIService _aiService = AIService();
   bool _isLoading = false;
   bool _sidebarOpen = false;
+  bool _aiJustFinished = false; // Track if AI just completed a response
   
   List<ChatSession> _chatSessions = [];
   ChatSession? _currentSession;
@@ -34,6 +36,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
+    
+    // Listen to user typing to trigger avatar reactions
+    _messageController.addListener(() {
+      // Could trigger a subtle avatar reaction when user starts typing
+      // For now, this is just monitoring - could add more interactions later
+    });
+    
     _loadSavedChats();
   }
 
@@ -310,6 +319,20 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         
         _scrollToBottom();
       }
+      
+      // AI finished responding - trigger celebration
+      setState(() {
+        _aiJustFinished = true;
+      });
+      
+      // Reset the celebration flag after a short delay
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() {
+            _aiJustFinished = false;
+          });
+        }
+      });
     } catch (e) {
       // Handle errors
       setState(() {
@@ -567,10 +590,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                               return _buildLoadingIndicator();
                             }
                             final message = _currentSession!.messages[index];
+                            final isLatestAIMessage = !message.isUser && index == _currentSession!.messages.length - 1;
                             return AnimatedMessageBubble(
                               message: message,
                               index: index,
                               shouldAnimate: _shouldAnimateMessage(message),
+                              isLatestAIMessage: isLatestAIMessage,
+                              isAITyping: _isLoading && isLatestAIMessage,
                             );
                           },
                         ),
@@ -662,30 +688,21 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.secondary,
-                  Theme.of(context).colorScheme.tertiary,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          // Animated AI Avatar in thinking state
+          AnimatedAIAvatar(
+            size: 40,
+            isTyping: true, // Show thinking animation
+            justFinished: false,
+            onTap: () {
+              // Fun interaction during loading
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('🤔 I\'m thinking hard! Please wait...'),
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: Colors.orange.withOpacity(0.8),
                 ),
-              ],
-            ),
-            child: const Icon(
-              Icons.auto_awesome,
-              size: 20,
-              color: Colors.white,
-            ),
+              );
+            },
           ),
           const SizedBox(width: 12),
           Container(

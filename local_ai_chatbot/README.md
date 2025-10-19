@@ -1,16 +1,36 @@
-# local_ai_chatbot
+# Local AI Chatbot
 
-A new Flutter project.
+A beautiful, animated Flutter chatbot powered by local AI (Qwen2.5) with interactive Rive avatar and persistent chat history.
+
+## Features
+- Animated sidebar with chat history
+- Interactive Rive cat avatar (idle, thinking, celebration)
+- Markdown and LaTeX rendering for AI responses
+- Local chat history persistence
+- Modern, responsive UI
+
+## Screenshots
+
+### Main Chat Screen
+![Main Chat Screen](screenshots/Screenshot%202025-10-19%20113706.png)
+
+### Sidebar Animation
+![Sidebar Animation](screenshots/Screenshot%202025-10-19%20113711.png)
+
+### Rive Avatar (Idle)
+![Rive Avatar Idle](screenshots/Screenshot%202025-10-19%20113922.png)
+
+### Rive Avatar (Celebration)
+![Rive Avatar Celebration](screenshots/Screenshot%202025-10-19%20113940.png)
 
 ## Getting Started
+1. Clone this repo
+2. Run `flutter pub get`
+3. Start with `flutter run`
 
-This project is a starting point for a Flutter application.
+## Customization
+- Replace `assets/animations/ai_cat.riv` with your own Rive file for custom avatar animations
+- Edit `lib/widgets/rive_avatar_widget.dart` to configure state machine names and triggers
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+Made with ❤️ using Flutter and Rive

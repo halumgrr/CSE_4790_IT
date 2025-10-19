@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import '../models/message.dart';
 import '../utils/animation_tracker.dart';
 import 'message_renderer.dart';
+import 'rive_avatar_widget.dart';
 
 class AnimatedMessageBubble extends StatefulWidget {
   final Message message;
   final int index;
   final bool shouldAnimate;
   final VoidCallback? onAnimationComplete;
+  final bool isLatestAIMessage;
+  final bool isAITyping;
 
   const AnimatedMessageBubble({
     super.key,
@@ -15,6 +18,8 @@ class AnimatedMessageBubble extends StatefulWidget {
     required this.index,
     this.shouldAnimate = false,
     this.onAnimationComplete,
+    this.isLatestAIMessage = false,
+    this.isAITyping = false,
   });
 
   @override
@@ -98,26 +103,21 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!widget.message.isUser) ...[
-                // AI Avatar
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                // Animated AI Avatar - Interactive based on message state
+                AnimatedAIAvatar(
+                  size: 40,
+                  isTyping: widget.isAITyping && widget.isLatestAIMessage,
+                  justFinished: widget.isLatestAIMessage && !widget.isAITyping && widget.message.text.isNotEmpty,
+                  onTap: () {
+                    // Fun interaction when avatar is tapped
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('🐱 Meow! I\'m Sage, your AI companion!'),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.blue.withOpacity(0.8),
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.smart_toy,
-                    color: Colors.grey[600],
-                    size: 24,
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 12),
               ],
