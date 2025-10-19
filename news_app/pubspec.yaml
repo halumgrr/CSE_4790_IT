@@ -40,7 +40,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
   dio: ^5.4.3
   intl: ^0.19.0
-  flutter_widget_from_html: ^0.14.7
+  flutter_widget_from_html: ^0.17.1
 
 dev_dependencies:
   flutter_test:

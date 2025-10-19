@@ -23,43 +23,57 @@ class _NewStoriesScreenState extends State<NewStoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<int>>(
-      future: _idsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        final ids = snapshot.data ?? [];
-        if (ids.isEmpty) {
-          return const Center(child: Text('No stories found.'));
-        }
-        return ListView.builder(
-          itemCount: ids.length,
-          itemBuilder: (context, index) {
-            return FutureBuilder<Map<String, dynamic>>(
-              future: HackerNewsApi.fetchStory(ids[index]),
-              builder: (context, storySnapshot) {
-                if (storySnapshot.connectionState == ConnectionState.waiting) {
-                  return const ListTile(title: Text('Loading...'));
-                }
-                if (storySnapshot.hasError || storySnapshot.data == null) {
-                  return const ListTile(title: Text('Error loading story'));
-                }
-                final story = Story.fromJson(storySnapshot.data!);
-                return ListTile(
-                  title: Text(story.title),
-                  onTap: () {
-                    GoRouter.of(context).push('/details', extra: story);
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: FutureBuilder<List<int>>(
+        future: _idsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final ids = snapshot.data ?? [];
+          if (ids.isEmpty) {
+            return const Center(child: Text('No stories found.'));
+          }
+          return ListView.builder(
+            itemCount: ids.length,
+            padding: const EdgeInsets.all(8),
+            itemBuilder: (context, index) {
+              return FutureBuilder<Map<String, dynamic>>(
+                future: HackerNewsApi.fetchStory(ids[index]),
+                builder: (context, storySnapshot) {
+                  if (storySnapshot.connectionState == ConnectionState.waiting) {
+                    return const Card(
+                      margin: EdgeInsets.symmetric(vertical: 6),
+                      child: ListTile(title: Text('Loading...')),
+                    );
+                  }
+                  if (storySnapshot.hasError || storySnapshot.data == null) {
+                    return const Card(
+                      margin: EdgeInsets.symmetric(vertical: 6),
+                      child: ListTile(title: Text('Error loading story')),
+                    );
+                  }
+                  final story = Story.fromJson(storySnapshot.data!);
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    elevation: 2,
+                    child: ListTile(
+                      title: Text(story.title),
+                      onTap: () {
+                        GoRouter.of(context).push('/details', extra: story);
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

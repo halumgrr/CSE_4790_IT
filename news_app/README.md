@@ -1,6 +1,13 @@
+
 # news_app
 
-A new Flutter project.
+A Flutter Hacker News client with three tabs (new, top, best), post details, and comments.
+
+## Screenshots
+
+| Home Tabs | Post Details | Comments |
+|-----------|--------------|----------|
+| ![Home Tabs](screenshots/hometabs.png) | ![Post Details](screenshots/post_details.png) | ![Comments](screenshots/comments.png) |
 
 ## Getting Started
 

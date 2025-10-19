@@ -13,6 +13,19 @@ class MainApp extends StatelessWidget {
         title: 'Hacker News App',
         routerConfig: router,
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF1976D2),
+            foregroundColor: Colors.white,
+            elevation: 2,
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Color(0xFF1976D2),
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+          ),
+        ),
       ),
     );
   }
