@@ -15,7 +15,7 @@ A beautiful, modern Flutter note-taking app with theme switching, font size cont
 
 | Home Screen | Note List | Note Edit | Settings | Delete Button |
 |-------------|-----------|-----------|----------|---------------|
-| ![Home Screen](screenshots/home_screen.png) | ![Note List](screenshots/notelist.png) | ![Note Edit](screenshots/note_edit.png) | ![Settings](screenshots/settings.png) | ![Delete Button](screenshots/delete.png) |
+| ![Home Screen](Screenshots/home_screen.png) | ![Note List](Screenshots/notelist.png) | ![Note Edit](Screenshots/note_edit.png) | ![Settings](Screenshots/settings.png) | ![Delete Button](Screenshots/delete.png) |
 
 ## Getting Started
 1. Clone this repo
