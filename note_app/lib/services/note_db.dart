@@ -1,6 +1,8 @@
 import 'package:sembast/sembast.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sembast/sembast_io.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:sembast_web/sembast_web.dart' as sembast_web;
+import 'package:path_provider/path_provider.dart' if (dart.library.html) 'note_db_web_stub.dart';
 // ...existing code...
 import '../models/note.dart';
 
@@ -10,9 +12,13 @@ class NoteDb {
 
   static Future<Database> get _database async {
     if (_db != null) return _db!;
-    final dir = await getApplicationDocumentsDirectory();
-    final dbPath = '${dir.path}/notes.db';
-    _db = await databaseFactoryIo.openDatabase(dbPath);
+    if (kIsWeb) {
+      _db = await sembast_web.databaseFactoryWeb.openDatabase('notes.db');
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final dbPath = '${dir.path}/notes.db';
+      _db = await databaseFactoryIo.openDatabase(dbPath);
+    }
     return _db!;
   }
 

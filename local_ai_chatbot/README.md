@@ -20,7 +20,7 @@ A beautiful, animated Flutter chatbot powered by local AI (Qwen2.5) with interac
 ### Chat History
 <img src="screenshots/Screenshot%202025-10-19%20113922.png" alt="Rive Avatar Idle" width="350"/>
 
-### Riv Chat BubbleS
+### Riv Chat Bubble + MarkdownS
 <img src="screenshots/Screenshot%202025-10-19%20113940.png" alt="Rive Avatar Celebration" width="350"/>
 
 ## Getting Started
