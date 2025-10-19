@@ -181,52 +181,38 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hero Banner with logo and GhorerBazar text (orange theme)
+                  // Hero Banner
                   Container(
                     width: double.infinity,
                     height: 180,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.deepOrange, Colors.orangeAccent],
+                        colors: [Colors.green[700]!, Colors.green[500]!],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                     ),
-                    child: Center(
-                      child: Row(
+                    child: const Center(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/images/ghorer_bazar_logo.webp',
-                            height: 70,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.store, color: Colors.white, size: 60),
-                          ),
-                          const SizedBox(width: 18),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'GhorerBazar',
-                                style: TextStyle(
-                                  fontSize: 34,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Fresh Organic Products for Healthy Living',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Text(
+                          //   '🌿 GhorerBazar 🌿',
+                          //   style: TextStyle(
+                          //     fontSize: 24,
+                          //     fontWeight: FontWeight.bold,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
+                          // SizedBox(height: 8),
+                          // Text(
+                          //   'Fresh Organic Products for Healthy Living',
+                          //   style: TextStyle(
+                          //     fontSize: 14,
+                          //     color: Colors.white70,
+                          //   ),
+                          //   textAlign: TextAlign.center,
+                          // ),
                         ],
                       ),
                     ),

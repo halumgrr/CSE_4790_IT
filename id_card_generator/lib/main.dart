@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -38,8 +41,9 @@ class IDCardFormState extends State<IDCardForm> {
   // Variable to track if we should show the card
   bool showCard = false;
   
-  // Variable to store selected image file
+  // Variables for image handling
   File? selectedImageFile;
+  Uint8List? webImage;
   final ImagePicker _picker = ImagePicker();
   
   // Variables for customization
@@ -185,6 +189,7 @@ class IDCardFormState extends State<IDCardForm> {
                                 onPressed: () {
                                   setState(() {
                                     selectedImageFile = null;
+                                    webImage = null;
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -218,9 +223,18 @@ class IDCardFormState extends State<IDCardForm> {
                               onPressed: () async {
                                 final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
                                 if (image != null) {
-                                  setState(() {
-                                    selectedImageFile = File(image.path);
-                                  });
+                                  if (kIsWeb) {
+                                    var bytes = await image.readAsBytes();
+                                    setState(() {
+                                      webImage = bytes;
+                                      selectedImageFile = null;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedImageFile = File(image.path);
+                                      webImage = null;
+                                    });
+                                  }
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Photo selected successfully!'),
@@ -257,7 +271,7 @@ class IDCardFormState extends State<IDCardForm> {
                           duration: Duration(seconds: 2),
                         ),
                       );
-                    } else if (selectedImageFile == null) {
+                    } else if (selectedImageFile == null && webImage == null) {
                       // Show error for missing photo
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -588,13 +602,20 @@ class IDCardFormState extends State<IDCardForm> {
                               width: 5,
                             ),
                           ),
-                          child: selectedImageFile != null
-                              ? Image.file(
-                                  selectedImageFile!,
-                                  fit: BoxFit.cover,
-                                  width: 140,
-                                  height: 170,
-                                )
+                          child: (selectedImageFile != null || webImage != null)
+                              ? kIsWeb
+                                  ? Image.memory(
+                                      webImage!,
+                                      fit: BoxFit.cover,
+                                      width: 140,
+                                      height: 170,
+                                    )
+                                  : Image.file(
+                                      selectedImageFile!,
+                                      fit: BoxFit.cover,
+                                      width: 140,
+                                      height: 170,
+                                    )
                               : Center(
                                   child: Icon(
                                     Icons.person,

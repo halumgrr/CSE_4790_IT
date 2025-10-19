@@ -1,16 +1,46 @@
-# id_cloning_app
+# ID Cloning App
 
-A new Flutter project.
+A Flutter application that displays a modern and beautiful student ID card design with a clean user interface.
+
+## Screenshots
+
+| ID Card View | 
+|-------------|
+| ![ID Card](screenshots/idcard.png) |
+
+## Features
+
+- Student information display
+- Responsive design
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a Flutter application that demonstrates UI design capabilities.
 
-A few resources to get you started if this is your first Flutter project:
+To run this project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Ensure you have Flutter installed on your machine
+2. Clone this repository
+3. Run `flutter pub get` to install dependencies
+4. Run `flutter run` to start the app
+
+## Requirements
+
+- Flutter 3.0 or higher
+- Dart 3.0 or higher
+- Android Studio / VS Code
+- Android SDK / iOS Development setup
+
+## Resources
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details
