@@ -6,15 +6,15 @@ A Flutter e-commerce application for organic food products with user authenticat
 
 | Login | Forgot Password | Reset Confirmation |
 |--------|-----------------|-------------------|
-| ![Login](screenshots/login.png) | ![Forgot Password](screenshots/forgot_password.png) | ![Reset Confirmation](screenshots/reset_confirmation_mail.png) |
+| ![Login](Screenshots/login.png) | ![Forgot Password](Screenshots/forgot_password.png) | ![Reset Confirmation](Screenshots/reset_confirmation_mail.png) |
 
 | Reset Password | Home | Categories |
 |----------------|------|------------|
-| ![Reset Password](screenshots/reset_password.png) | ![Homepage](screenshots/homepage.png) | ![Categories](screenshots/categories.png) |
+| ![Reset Password](Screenshots/reset_password.png) | ![Homepage](Screenshots/homepage.png) | ![Categories](Screenshots/categories.png) |
 
 | Search | Checkout |
 |--------|----------|
-| ![Search](screenshots/search.png) | ![Checkout](screenshots/checkout.png) |
+| ![Search](Screenshots/search.png) | ![Checkout](Screenshots/checkout.png) |
 
 ## Features
 
