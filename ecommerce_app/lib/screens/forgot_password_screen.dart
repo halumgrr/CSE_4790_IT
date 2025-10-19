@@ -106,18 +106,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon and Title
-              const Icon(
+              Icon(
                 Icons.lock_reset,
                 size: 80,
-                color: Colors.deepPurple,
+                color: Colors.green[700],
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Reset Your Password',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
+                  color: Colors.green[700],
                 ),
               ),
               const SizedBox(height: 16),
@@ -237,7 +237,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _sendPasswordReset,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Colors.green[700],
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -272,11 +272,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         MaterialPageRoute(builder: (context) => const LoginScreen()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Back to Login',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Colors.deepPurple,
+                        color: Colors.green[700],
                       ),
                     ),
                   ),

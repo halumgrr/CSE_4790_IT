@@ -18,9 +18,13 @@ class MyApp extends StatelessWidget {
     return AuthStateListener(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'TradePartner',
+        title: 'GhorerBazar',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.green,
+            primary: Colors.green[700],
+            secondary: Colors.green[500],
+          ),
           useMaterial3: true,
         ),
         initialRoute: '/',

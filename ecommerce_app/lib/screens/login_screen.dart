@@ -172,18 +172,19 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // App Logo/Title
-              const Icon(
-                Icons.shopping_cart,
-                size: 80,
-                color: Colors.deepPurple,
+              Image.asset(
+                'assets/images/ghorer_bazar_logo.webp',
+                height: 100,
+                width: 100,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 16),
               const Text(
-                'TradePartner',
+                'GhorerBazar',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
+                  color: Colors.green,
                 ),
               ),
               const SizedBox(height: 8),
@@ -308,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Colors.green[700],
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -341,10 +342,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'Forgot Password?',
                     style: TextStyle(
-                      color: Colors.deepPurple,
+                      color: Colors.green[700],
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -364,11 +365,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         MaterialPageRoute(builder: (context) => const SignupScreen()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Sign Up',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Colors.deepPurple,
+                        color: Colors.green[700],
                       ),
                     ),
                   ),

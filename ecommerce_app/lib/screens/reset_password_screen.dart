@@ -137,18 +137,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon and Title
-              const Icon(
+              Icon(
                 Icons.security,
                 size: 80,
-                color: Colors.deepPurple,
+                color: Colors.green[700],
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Create New Password',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
+                  color: Colors.green[700],
                 ),
               ),
               const SizedBox(height: 16),
@@ -270,7 +270,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _resetPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Colors.green[700],
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -301,11 +301,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Back to Login',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.deepPurple,
+                    color: Colors.green[700],
                   ),
                 ),
               ),

@@ -1,16 +1,77 @@
-# ecommerce_app
+# GhorerBazar - Organic Food E-commerce App
 
-A new Flutter project.
+A Flutter e-commerce application for organic food products with user authentication, product catalog, shopping cart, and category-based browsing.
+
+## Screenshots
+
+| Login | Forgot Password | Reset Confirmation |
+|--------|-----------------|-------------------|
+| ![Login](screenshots/login.png) | ![Forgot Password](screenshots/forgot_password.png) | ![Reset Confirmation](screenshots/reset_confirmation_mail.png) |
+
+| Reset Password | Home | Categories |
+|----------------|------|------------|
+| ![Reset Password](screenshots/reset_password.png) | ![Homepage](screenshots/homepage.png) | ![Categories](screenshots/categories.png) |
+
+| Search | Checkout |
+|--------|----------|
+| ![Search](screenshots/search.png) | ![Checkout](screenshots/checkout.png) |
+
+## Features
+
+- User authentication (signup, login, password reset)
+- Product catalog with categories
+- Shopping cart functionality
+- Product search and filtering
+- Order management
+- Bengali language support for product names
+- Responsive UI with Material Design 3
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is built with Flutter and uses Supabase as the backend. To get started:
 
-A few resources to get you started if this is your first Flutter project:
+1. Clone the repository
+2. Install Flutter dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Create a `.env` file with your Supabase credentials
+4. Run the app:
+   ```bash
+   flutter run
+   ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Tech Stack
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter 3.24.3
+- Supabase for backend services
+- Material Design 3
+- PostgreSQL database
+
+## Development Setup
+
+### Prerequisites
+
+- Flutter SDK
+- Supabase account
+- VS Code or Android Studio
+
+### Environment Configuration
+
+Create a `.env` file in the root directory with:
+
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a new feature branch
+3. Make your changes
+4. Create a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
