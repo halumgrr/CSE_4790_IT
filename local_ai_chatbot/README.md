@@ -6,7 +6,7 @@ A beautiful, animated Flutter chatbot powered by local AI (Qwen2.5) with interac
 
 | Main Chat Screen | Sidebar Animation | Rive Avatar (Idle) | Rive Avatar (Celebration) |
 |------------------|------------------|--------------------|---------------------------|
-| ![Main Chat Screen](screenshots/Screenshot%202025-10-19%20113706.png) | ![Sidebar Animation](screenshots/Screenshot%202025-10-19%20113711.png) | ![Rive Avatar Idle](screenshots/Screenshot%202025-10-19%20113922.png) | ![Rive Avatar Celebration](screenshots/Screenshot%202025-10-19%20113940.png) |
+| ![Splash Screen](screenshots/Screenshot%202025-10-19%20113706.png) | ![Chat Landing Page](screenshots/Screenshot%202025-10-19%20113711.png) | ![Sidebar History](screenshots/Screenshot%202025-10-19%20113922.png) | ![Rive Chatbubble + Markdown](screenshots/Screenshot%202025-10-19%20113940.png) |
 
 ## Features
 - Animated sidebar with chat history
