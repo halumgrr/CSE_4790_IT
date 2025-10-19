@@ -12,16 +12,16 @@ A beautiful, animated Flutter chatbot powered by local AI (Qwen2.5) with interac
 ## Screenshots
 
 ### Main Chat Screen
-![Main Chat Screen](screenshots/Screenshot%202025-10-19%20113706.png)
+<img src="screenshots/Screenshot%202025-10-19%20113706.png" alt="Main Chat Screen" width="500"/>
 
 ### Sidebar Animation
-![Sidebar Animation](screenshots/Screenshot%202025-10-19%20113711.png)
+<img src="screenshots/Screenshot%202025-10-19%20113711.png" alt="Sidebar Animation" width="500"/>
 
 ### Rive Avatar (Idle)
-![Rive Avatar Idle](screenshots/Screenshot%202025-10-19%20113922.png)
+<img src="screenshots/Screenshot%202025-10-19%20113922.png" alt="Rive Avatar Idle" width="350"/>
 
 ### Rive Avatar (Celebration)
-![Rive Avatar Celebration](screenshots/Screenshot%202025-10-19%20113940.png)
+<img src="screenshots/Screenshot%202025-10-19%20113940.png" alt="Rive Avatar Celebration" width="350"/>
 
 ## Getting Started
 1. Clone this repo
